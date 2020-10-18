@@ -1,6 +1,10 @@
 name: go_test
 
-on: [push, pull_request]
+on:
+  push:
+    tags-ignore:
+        - 'v*.*.*'
+  pull_request:
 
 jobs:
   test-and-build:
