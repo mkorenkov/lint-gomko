@@ -1,12 +1,18 @@
 # lint-gomko
 
-opionated golang linters
+opinionated golang linters
 
 ## Linters
 
 - `pkg/linters/appendr` - `append` statements usage linter
 - `pkg/linters/elser` - `else` statements usage linter
 - `pkg/linters/readall` - `ioutil.ReadAll` usage linter
+
+# Less opinionated linters
+
+```
+go run cmd/ioutil-readall/main.go ./testdata/*
+```
 
 # Latest release instructions
 
