@@ -11,6 +11,7 @@ opinionated golang linters
 # Less opinionated linters
 
 ```
+go get -u github.com/mkorenkov/lint-gomko/cmd/ioutil-readall
 go run cmd/ioutil-readall/main.go ./testdata/*
 ```
 
