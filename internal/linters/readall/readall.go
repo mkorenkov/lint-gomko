@@ -21,6 +21,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		importAlias := map[string]string{}
 
 		ast.Inspect(file, func(n ast.Node) bool {
+			// collect import aliases
 			if imp, ok := n.(*ast.ImportSpec); ok {
 				if imp.Name != nil {
 					val, err := strconv.Unquote(imp.Path.Value)
@@ -30,15 +31,16 @@ func run(pass *analysis.Pass) (interface{}, error) {
 					importAlias[imp.Name.String()] = val
 				}
 			}
+			// check function calls
 			if call, ok := n.(*ast.CallExpr); ok {
 				if fun, ok := call.Fun.(*ast.SelectorExpr); ok {
 					funcName := fun.Sel.Name
 					if pkgID, ok := fun.X.(*ast.Ident); ok {
-						pkgPath := pkgID.Name
-						if alias, ok := importAlias[pkgPath]; ok {
-							pkgPath = path.Base(alias)
+						pkgName := pkgID.Name
+						if alias, ok := importAlias[pkgName]; ok {
+							pkgName = path.Base(alias)
 						}
-						if fmt.Sprintf("%s.%s", pkgPath, funcName) == "ioutil.ReadAll" {
+						if fmt.Sprintf("%s.%s", pkgName, funcName) == "ioutil.ReadAll" {
 							pass.Report(analysis.Diagnostic{
 								Pos:            pkgID.Pos(),
 								End:            0,
