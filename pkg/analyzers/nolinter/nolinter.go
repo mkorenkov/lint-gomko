@@ -18,11 +18,9 @@ var Analyzer = &analysis.Analyzer{
 
 // NolintComment describes known facts about //nolint comment
 type NolintComment struct {
-	Filename string
-	Package  string
-	Comment  string
-	Pos      token.Pos
-	End      token.Pos
+	Comment string
+	Pos     token.Pos
+	End     token.Pos
 }
 
 var nolintRe = regexp.MustCompile(`^\s*//\s*nolint:?`)
@@ -34,11 +32,9 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			for _, comment := range comments.List {
 				if nolintRe.MatchString(comment.Text) {
 					facts = append(facts, NolintComment{
-						Filename: file.Name.String(),
-						Package:  pass.Pkg.Path(),
-						Comment:  comment.Text,
-						Pos:      comment.Slash,
-						End:      comment.End(),
+						Comment: comment.Text,
+						Pos:     comment.Slash,
+						End:     comment.End(),
 					})
 				}
 			}

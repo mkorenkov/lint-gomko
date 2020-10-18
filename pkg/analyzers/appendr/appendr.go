@@ -8,9 +8,12 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
+const analyzerName = "appendr"
+const analyzerMsg = "append is not efficient on the heap and is not prone to race conditions"
+
 // Analyzer append is not efficient on the heap and is not prone to race conditions.
 var Analyzer = &analysis.Analyzer{
-	Name:     "appendr",
+	Name:     analyzerName,
 	Doc:      "finds append statements in the code",
 	Run:      run,
 	Requires: []*analysis.Analyzer{nolinter.Analyzer},
@@ -34,8 +37,8 @@ func run(pass *analysis.Pass) (interface{}, error) {
 						possibleReports = append(possibleReports, &reports.Report{
 							Pos:          ident.Pos(),
 							NextTokenPos: file.End(),
-							Category:     "appendr",
-							Message:      "append is not efficient on the heap and is not prone to race conditions",
+							Category:     analyzerName,
+							Message:      analyzerMsg,
 						})
 					}
 				}

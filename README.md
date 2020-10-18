@@ -8,18 +8,18 @@ opinionated golang linters
 - `pkg/linters/elser` - `else` statements usage linter
 - `pkg/linters/readall` - `ioutil.ReadAll` usage linter
 
+# Opinionated instructions
+
+```
+go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko-all
+go vet -vettool ~/bin/lint-gomko-all ./testdata/*
+```
+
 # Less opinionated linters
 
 ```
 go get -u github.com/mkorenkov/lint-gomko/cmd/ioutil-readall
 ioutil-readall ./testdata/*
-```
-
-# Latest release instructions
-
-```
-go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko-all
-go vet -vettool ~/bin/lint-gomko-all ./testdata/*
 ```
 
 ## Running from source instructions

@@ -8,9 +8,12 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
+const analyzerName = "elser"
+const analyzerMsg = "else is unnecessary, prefer early termination"
+
 // Analyzer else is unnecessary, prefer early termination.
 var Analyzer = &analysis.Analyzer{
-	Name:     "elser",
+	Name:     analyzerName,
 	Doc:      "finds else statements in the code",
 	Run:      run,
 	Requires: []*analysis.Analyzer{nolinter.Analyzer},
@@ -32,8 +35,8 @@ func run(pass *analysis.Pass) (interface{}, error) {
 					possibleReports = append(possibleReports, &reports.Report{
 						Pos:          b.Else.Pos(),
 						NextTokenPos: file.End(),
-						Category:     "elser",
-						Message:      "else is unnecessary, prefer early termination",
+						Category:     analyzerName,
+						Message:      analyzerMsg,
 					})
 				}
 			}
