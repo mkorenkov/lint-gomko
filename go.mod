@@ -1,4 +1,4 @@
-module github.com/mkorenkov/go-style-linters
+module github.com/mkorenkov/lint-gomko
 
 go 1.15
 
