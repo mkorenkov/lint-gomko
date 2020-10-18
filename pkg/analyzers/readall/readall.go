@@ -11,9 +11,12 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
+const analyzerName = "readall"
+const analyzerMsg = "ioutil.ReadAll is expensive and should be avoided"
+
 // Analyzer ioutil.ReadAll is expensive. This linter will nudge you about ioutil.ReadAll presence in your code.
 var Analyzer = &analysis.Analyzer{
-	Name:     "readall",
+	Name:     analyzerName,
 	Doc:      "finds ioutil.ReadAll usages",
 	Run:      run,
 	Requires: []*analysis.Analyzer{nolinter.Analyzer},
@@ -48,8 +51,8 @@ func run(pass *analysis.Pass) (interface{}, error) {
 							possibleReports = append(possibleReports, &reports.Report{
 								Pos:          pkgID.Pos(),
 								NextTokenPos: file.End(),
-								Category:     "readall",
-								Message:      "ioutil.ReadAll is expensive and should be avoided",
+								Category:     analyzerName,
+								Message:      analyzerMsg,
 							})
 						}
 					}

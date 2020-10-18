@@ -13,8 +13,14 @@ func main() {
 		log.Panic(err)
 	}
 	defer f.Close()
-	r := io.LimitReader(f, 100)
-	res, err := myioutil.ReadAll(r)
+	r1 := io.LimitReader(f, 100)
+	r2 := io.LimitReader(f, 200)
+	res, err := myioutil.ReadAll(r1) //nolint
+	if err != nil {
+		log.Panic(err)
+	}
+	log.Printf("b=%d \n", len(res))
+	res, err = myioutil.ReadAll(r2) // want `ioutil.ReadAll`
 	if err != nil {
 		log.Panic(err)
 	}
