@@ -2,7 +2,7 @@
 
 opionated golang linters
 
-## Linders
+## Linters
 
 - `pkg/linters/appendr` - `append` statements usage linter
 - `pkg/linters/elser` - `else` statements usage linter
