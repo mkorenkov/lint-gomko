@@ -3,7 +3,9 @@ name: go_test
 on:
   push:
     tags-ignore:
-        - 'v*.*.*'
+    - 'v*.*.*'
+    branches:
+    - "*"
   pull_request:
 
 jobs:
