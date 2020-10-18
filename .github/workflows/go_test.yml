@@ -6,12 +6,16 @@ jobs:
   test-and-build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
     - name: install go
       uses: actions/setup-go@v2
 
     - name: go test
       run: go test ./...
+
     - name: go build
       run: |
         mkdir -p bin

@@ -23,5 +23,6 @@ jobs:
         set -euo pipefail
         lint_version="$(curl -s -o /dev/null -w '%{redirect_url}' 'https://github.com/golangci/golangci-lint/releases/latest' | sed 's/.*releases\/tag\///g')"
         curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b "$GITHUB_WORKSPACE" "$lint_version"
+
     - name: run linters
       run: $GITHUB_WORKSPACE/golangci-lint run --new-from-rev origin/master -c .golangci.yml ./...
