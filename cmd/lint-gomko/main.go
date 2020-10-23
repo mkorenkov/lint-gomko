@@ -1,11 +1,13 @@
 package main
 
 import (
-	"golang.org/x/tools/go/analysis/singlechecker"
+	"golang.org/x/tools/go/analysis/unitchecker"
 
 	"github.com/mkorenkov/lint-gomko/pkg/analyzers/readall"
 )
 
 func main() {
-	singlechecker.Main(readall.Analyzer)
+	unitchecker.Main(
+		readall.Analyzer,
+	)
 }

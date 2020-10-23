@@ -8,23 +8,31 @@ opinionated golang linters
 - `pkg/linters/elser` - `else` statements usage linter
 - `pkg/linters/readall` - `ioutil.ReadAll` usage linter
 
-# Opinionated instructions
+# ioutil.ReadAll linter only
+
+```
+go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko
+lint-gomko ./testdata/*
+```
+
+# All linters
 
 ```
 go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko-all
 go vet -vettool ~/bin/lint-gomko-all ./testdata/*
 ```
 
-# Less opinionated linters
+# Skip file patterns
+
+Set `IGNORE` environment variable to comma-separated [glob](https://golang.org/pkg/path/filepath/#Glob) file patterns.
 
 ```
-go get -u github.com/mkorenkov/lint-gomko/cmd/ioutil-readall
-ioutil-readall ./testdata/*
+IGNORE="*.twirp.go,*_test.go" go vet -vettool ~/bin/lint-gomko-all ./testdata/*
 ```
 
 ## Running from source instructions
 
 ```
-go build -o bin/lint-gomko-all cmd/lint-gomko-all/main.go
-go vet -vettool bin/lint-gomko-all ./testdata/*
+go build -o ~/bin/lint-gomko-all cmd/lint-gomko-all/main.go
+go vet -vettool ~/bin/lint-gomko-all ./testdata/*
 ```

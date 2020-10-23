@@ -3,9 +3,10 @@ package readall
 import (
 	"fmt"
 	"go/ast"
+	"go/token"
 	"path"
-	"strconv"
 
+	"github.com/mkorenkov/lint-gomko/pkg/analyzers"
 	"github.com/mkorenkov/lint-gomko/pkg/analyzers/nolinter"
 	"github.com/mkorenkov/lint-gomko/pkg/reports"
 	"golang.org/x/tools/go/analysis"
@@ -18,60 +19,31 @@ const analyzerMsg = "ioutil.ReadAll is expensive and should be avoided"
 var Analyzer = &analysis.Analyzer{
 	Name:     analyzerName,
 	Doc:      "finds ioutil.ReadAll usages",
-	Run:      run,
+	Run:      analyzers.Analyze(run),
 	Requires: []*analysis.Analyzer{nolinter.Analyzer},
 }
 
-func run(pass *analysis.Pass) (interface{}, error) {
-	for _, file := range pass.Files {
-		possibleReports := []*reports.Report{}
-		importAlias := map[string]string{}
+func run(n ast.Node, importAliases map[string]string, lastPos token.Pos) []reports.Report {
+	res := []reports.Report{}
 
-		ast.Inspect(file, func(n ast.Node) bool {
-			// collect import aliases
-			if imp, ok := n.(*ast.ImportSpec); ok {
-				if imp.Name != nil {
-					val, err := strconv.Unquote(imp.Path.Value)
-					if err != nil {
-						panic(err)
-					}
-					importAlias[imp.Name.String()] = val
+	if call, ok := n.(*ast.CallExpr); ok {
+		if fun, ok := call.Fun.(*ast.SelectorExpr); ok {
+			funcName := fun.Sel.Name
+			if pkgID, ok := fun.X.(*ast.Ident); ok {
+				pkgName := pkgID.Name
+				if alias, ok := importAliases[pkgName]; ok {
+					pkgName = path.Base(alias)
 				}
-			}
-			// check function calls
-			if call, ok := n.(*ast.CallExpr); ok {
-				if fun, ok := call.Fun.(*ast.SelectorExpr); ok {
-					funcName := fun.Sel.Name
-					if pkgID, ok := fun.X.(*ast.Ident); ok {
-						pkgName := pkgID.Name
-						if alias, ok := importAlias[pkgName]; ok {
-							pkgName = path.Base(alias)
-						}
-						if fmt.Sprintf("%s.%s", pkgName, funcName) == "ioutil.ReadAll" {
-							possibleReports = append(possibleReports, &reports.Report{
-								Pos:          pkgID.Pos(),
-								NextTokenPos: file.End(),
-								Category:     analyzerName,
-								Message:      analyzerMsg,
-							})
-						}
-					}
+				if fmt.Sprintf("%s.%s", pkgName, funcName) == "ioutil.ReadAll" {
+					res = append(res, reports.Report{
+						Pos:          pkgID.Pos(),
+						NextTokenPos: lastPos,
+						Category:     analyzerName,
+						Message:      analyzerMsg,
+					})
 				}
-			}
-			return true
-		})
-
-		for _, report := range possibleReports {
-			if !nolinter.IsSupressed(pass, report.Pos, report.NextTokenPos) {
-				pass.Report(analysis.Diagnostic{
-					Pos:            report.Pos,
-					End:            report.NextTokenPos,
-					Category:       report.Category,
-					Message:        report.Message,
-					SuggestedFixes: nil,
-				})
 			}
 		}
 	}
-	return nil, nil
+	return res
 }
