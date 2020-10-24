@@ -23,5 +23,11 @@ jobs:
         lint_version="$(curl -s -o /dev/null -w '%{redirect_url}' 'https://github.com/golangci/golangci-lint/releases/latest' | sed 's/.*releases\/tag\///g')"
         curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b "$GITHUB_WORKSPACE" "$lint_version"
 
-    - name: run linters
+    - name: install lint-gomko-all
+      run: go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko-all
+
+    - name: run golangci-lint
       run: $GITHUB_WORKSPACE/golangci-lint run -c .golangci.yml ./...
+
+    - name: run lint-gomko-all
+      run: IGNORE="testdata/*,vendor/*,*.twirp.go,*_test.go" go vet -vettool "$GOPATH/bin/lint-gomko-all"
