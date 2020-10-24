@@ -19,27 +19,26 @@ go vet -vettool ~/bin/lint-gomko
 
 ```
 go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko-all
-go vet -vettool ~/bin/lint-gomko-all
+go vet -vettool ~/bin/lint-gomko-all ./...
 ```
 
 # Skip files/directories
 
-Set `IGNORE` environment variable to comma-separated [glob](https://golang.org/pkg/path/filepath/#Glob) file patterns.
-Glob is path-dependent and since `go vet` can vet the package in the current directory, dirs can be ignored using this invocation:
+Set `IGNORE` environment variable to comma-separated glob-like file patterns.
+
+Examples:
+- `IGNORE="**/*_test.go"` ignores all the test files
+- `IGNORE="**/cmd/**"` ignores everything under cmd directory
 
 ```
-IGNORE="testdata/*" go vet -vettool ~/bin/lint-gomko-all
+IGNORE="**/*_test.go" go vet -vettool ~/bin/lint-gomko-all ./...
 ```
 
-Otherwise, package path can be passed to `go vet` and glob patterns would be dependant on that path
-
-```
-IGNORE="*.twirp.go,*_test.go" go vet -vettool ~/bin/lint-gomko-all ./testdata/*
-```
+NOTE: uses [github.com/gobwas/glob](https://github.com/gobwas/glob) with `'/'` separator.
 
 ## Building and running from source
 
 ```
 go build -o ~/bin/lint-gomko-all cmd/lint-gomko-all/main.go
-go vet -vettool ~/bin/lint-gomko-all
+go vet -vettool ~/bin/lint-gomko-all ./...
 ```

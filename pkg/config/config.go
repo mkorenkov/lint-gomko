@@ -2,10 +2,10 @@ package config
 
 import (
 	"os"
-	"path"
-	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/gobwas/glob"
 )
 
 const ignorePathsEnv = "IGNORE"
@@ -21,19 +21,12 @@ func ShouldSkip(filename string) (bool, error) {
 		ignorePaths = strings.Split(os.Getenv(ignorePathsEnv), ",")
 	})
 	for _, p := range ignorePaths {
-		curD, err := os.Getwd()
+		g, err := glob.Compile(p, '/')
 		if err != nil {
 			return false, err
 		}
-
-		res, err := filepath.Glob(p)
-		if err != nil {
-			return false, err
-		}
-		for _, matchedFileName := range res {
-			if filename == path.Join(curD, matchedFileName) {
-				return true, nil
-			}
+		if g.Match(filename) {
+			return true, nil
 		}
 	}
 	return false, nil
