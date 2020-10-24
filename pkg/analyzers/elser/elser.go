@@ -26,7 +26,7 @@ func run(n ast.Node, importAliases map[string]string, lastPos token.Pos) []repor
 
 	if b, ok := n.(*ast.IfStmt); ok {
 		if b.Else != nil {
-			res = append(res, reports.Report{
+			res = append(res, reports.Report{ //nolint:appendr
 				Pos:          b.Else.Pos(),
 				NextTokenPos: lastPos,
 				Category:     analyzerName,

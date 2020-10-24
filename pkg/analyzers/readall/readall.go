@@ -35,7 +35,7 @@ func run(n ast.Node, importAliases map[string]string, lastPos token.Pos) []repor
 					pkgName = path.Base(alias)
 				}
 				if fmt.Sprintf("%s.%s", pkgName, funcName) == "ioutil.ReadAll" {
-					res = append(res, reports.Report{
+					res = append(res, reports.Report{ //nolint:appendr
 						Pos:          pkgID.Pos(),
 						NextTokenPos: lastPos,
 						Category:     analyzerName,

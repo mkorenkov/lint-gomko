@@ -31,7 +31,7 @@ func run(pass *analysis.Pass) (interface{}, error) {
 		for _, comments := range file.Comments {
 			for _, comment := range comments.List {
 				if nolintRe.MatchString(comment.Text) {
-					facts = append(facts, NolintComment{
+					facts = append(facts, NolintComment{ //nolint:appendr
 						Comment: comment.Text,
 						Pos:     comment.Slash,
 						End:     comment.End(),

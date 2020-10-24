@@ -54,7 +54,7 @@ func Analyze(inspectFunc InspectFunc) func(pass *analysis.Pass) (interface{}, er
 				// collect reports from actual linter
 				newReports := inspectFunc(n, importAliases, file.End())
 				for _, r := range newReports {
-					possibleReports = append(possibleReports, &r)
+					possibleReports = append(possibleReports, &r) //nolint:appendr
 				}
 
 				return true

@@ -27,7 +27,7 @@ func run(n ast.Node, importAliases map[string]string, lastPos token.Pos) []repor
 	if call, ok := n.(*ast.CallExpr); ok {
 		if ident, ok := call.Fun.(*ast.Ident); ok {
 			if ident.Name == "append" {
-				res = append(res, reports.Report{
+				res = append(res, reports.Report{ //nolint:appendr
 					Pos:          ident.Pos(),
 					NextTokenPos: lastPos,
 					Category:     analyzerName,
