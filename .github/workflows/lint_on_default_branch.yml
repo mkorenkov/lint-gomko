@@ -1,4 +1,4 @@
-name: lint_master
+name: lint_on_default_branch
 
 on:
   push:
@@ -7,8 +7,9 @@ on:
     - main
 
 jobs:
-  ci:
+  lint_on_default_branch:
     runs-on: ubuntu-latest
+    needs: go_test
     steps:
     - uses: actions/checkout@v2
       with:
@@ -24,10 +25,10 @@ jobs:
         curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b "$GITHUB_WORKSPACE" "$lint_version"
 
     - name: install lint-gomko-all
-      run: go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko-all
+      run: GOBIN="$GITHUB_WORKSPACE/bin" go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko-all
 
     - name: run golangci-lint
       run: $GITHUB_WORKSPACE/golangci-lint run -c .golangci.yml ./...
 
     - name: run lint-gomko-all
-      run: IGNORE="testdata/*,vendor/*,*.twirp.go,*_test.go" go vet -vettool "$GOPATH/bin/lint-gomko-all"
+      run: IGNORE="testdata/*,vendor/*,*.twirp.go,*_test.go" go vet -vettool "$GITHUB_WORKSPACE/bin/lint-gomko-all"

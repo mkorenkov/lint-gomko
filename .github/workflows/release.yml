@@ -6,8 +6,9 @@ on:
     - 'v*.*.*'
 
 jobs:
-  goreleaser:
+  release:
     runs-on: ubuntu-latest
+    needs: go_test
     steps:
       - uses: actions/checkout@v2
         with:
@@ -15,9 +16,6 @@ jobs:
 
       - name: install go
         uses: actions/setup-go@v2
-
-      - name: go test
-        run: go test ./...
 
       - name: release $GITHUB_REPOSITORY
         uses: goreleaser/goreleaser-action@v2
