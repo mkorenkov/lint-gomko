@@ -12,7 +12,7 @@ opinionated golang linters
 
 ```
 go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko
-lint-gomko ./testdata/*
+go vet -vettool ~/bin/lint-gomko ./testdata/*
 ```
 
 # All linters
