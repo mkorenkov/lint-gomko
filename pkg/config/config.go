@@ -12,15 +12,16 @@ const ignorePathsEnv = "IGNORE"
 
 var ignorePaths []string
 
+var once sync.Once
+
 // ShouldSkip checks `ignorePathsEnv` environment variable for glob patterns and
 // matches those against the given `filename`.
 func ShouldSkip(filename string) (bool, error) {
-	var once sync.Once
 	once.Do(func() {
 		ignorePaths = strings.Split(os.Getenv(ignorePathsEnv), ",")
 	})
 	for _, p := range ignorePaths {
-		d, err := os.Getwd()
+		curD, err := os.Getwd()
 		if err != nil {
 			return false, err
 		}
@@ -30,7 +31,7 @@ func ShouldSkip(filename string) (bool, error) {
 			return false, err
 		}
 		for _, matchedFileName := range res {
-			if filename == path.Join(d, matchedFileName) {
+			if filename == path.Join(curD, matchedFileName) {
 				return true, nil
 			}
 		}
