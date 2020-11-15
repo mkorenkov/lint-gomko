@@ -6,6 +6,9 @@ on:
     - master
     - main
 
+env:
+  GOBIN: ${{github.workspace}}/.tools/bin
+
 jobs:
   lint_on_default_branch:
     runs-on: ubuntu-latest
@@ -17,17 +20,29 @@ jobs:
     - name: install go
       uses: actions/setup-go@v2
 
+    - name: prep tool dir
+      run: |
+        set -euo pipefail
+        mkdir -p "$GOBIN"
+        cd "$GOBIN"
+        go mod init github.com/$GITHUB_REPOSITORY/tools
+        cd -
+
     - name: install golangci-lint
       run: |
         set -euo pipefail
         lint_version="$(curl -s -o /dev/null -w '%{redirect_url}' 'https://github.com/golangci/golangci-lint/releases/latest' | sed 's/.*releases\/tag\///g')"
-        curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b "$GITHUB_WORKSPACE" "$lint_version"
+        curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b "$GOBIN" "$lint_version"
 
     - name: install lint-gomko-all
-      run: GOBIN="$GITHUB_WORKSPACE/bin" go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko-all
+      run: |
+        set -euo pipefail
+        cd "$GOBIN"
+        go get -u github.com/mkorenkov/lint-gomko/cmd/lint-gomko-all
+        cd -
 
     - name: run golangci-lint
-      run: $GITHUB_WORKSPACE/golangci-lint run -c .golangci.yml ./...
+      run: $GOBIN/golangci-lint run -c .golangci.yml ./...
 
     - name: run lint-gomko-all
-      run: IGNORE="**/*.twirp.go,**/*_test.go,**/fake_*.go" go vet -vettool "$GITHUB_WORKSPACE/bin/lint-gomko-all" ./...
+      run: IGNORE="**/*.twirp.go,**/*_test.go,**/fake_*.go" go vet -vettool "$GOBIN/lint-gomko-all" ./...
